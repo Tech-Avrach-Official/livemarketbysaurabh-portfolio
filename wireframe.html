@@ -1,0 +1,515 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Layout options — LiveMarketBySaurabh</title>
+<style>
+/* Deliberately light and plain. This must never be mistaken for the
+   real page — it is a decision tool, not a design. */
+:root{
+  --ink:#1a1d21; --mid:#6b7280; --faint:#9aa3ad;
+  --line:#c9ced6; --box:#eceff3; --paper:#f7f8fa;
+  --pick:#1a7f5a; --pick-bg:#e6f4ee;
+}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);
+  font:14px/1.55 ui-monospace,SFMono-Regular,Menlo,monospace}
+.wrap{max-width:1180px;margin-inline:auto;padding:0 24px}
+
+header{position:sticky;top:0;z-index:5;background:var(--paper);
+  border-bottom:1px solid var(--line);padding:18px 0}
+header h1{margin:0 0 4px;font-size:16px}
+header p{margin:0;color:var(--mid);font-size:12.5px}
+
+.sec{padding:36px 0;border-bottom:1px solid var(--line)}
+.sec-head{display:flex;align-items:baseline;gap:12px;margin-bottom:6px}
+.sec-num{color:var(--faint);font-size:12px}
+.sec-head h2{margin:0;font-size:15px}
+.sec-note{margin:0 0 20px;color:var(--mid);font-size:12.5px;max-width:70ch}
+
+.opts{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+@media(max-width:860px){.opts{grid-template-columns:1fr}}
+
+.opt{border:1px solid var(--line);border-radius:8px;background:#fff;
+  padding:12px;cursor:pointer;transition:border-color .15s,background .15s}
+.opt:hover{border-color:var(--mid)}
+.opt.is-picked{border-color:var(--pick);background:var(--pick-bg);
+  box-shadow:inset 0 0 0 1px var(--pick)}
+.opt-top{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.opt-id{font-weight:700;font-size:12px}
+.opt-name{font-size:12px;color:var(--mid)}
+.tag{margin-left:auto;font-size:10px;padding:2px 6px;border-radius:3px;
+  background:var(--box);color:var(--mid);white-space:nowrap}
+.opt.is-picked .tag.now{background:var(--pick);color:#fff}
+.opt-why{margin:10px 0 0;font-size:11.5px;color:var(--mid);line-height:1.5}
+
+/* ── wireframe primitives ───────────────────────────────────── */
+.wf{background:var(--paper);border:1px solid var(--line);border-radius:5px;
+  padding:10px;display:flex;flex-direction:column;gap:6px;min-height:150px}
+.b{background:var(--box);border:1px dashed var(--line);border-radius:3px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:9.5px;color:var(--faint);text-align:center;padding:4px;min-height:16px}
+.b.solid{background:#dfe3e9;border-style:solid}
+.b.cta{background:#3a3f46;border-color:#3a3f46;color:#fff}
+.row{display:flex;gap:6px}
+.col{display:flex;flex-direction:column;gap:6px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.g5{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.f1{flex:1}.f2{flex:2}
+.h20{min-height:20px}.h28{min-height:28px}.h40{min-height:40px}
+.h56{min-height:56px}.h72{min-height:72px}
+.tall{min-height:96px}
+.txt{border:0;background:0;color:var(--faint);font-size:9.5px;
+  padding:0;justify-content:flex-start;min-height:0}
+
+/* ── picks panel ────────────────────────────────────────────── */
+.picks{position:sticky;bottom:0;background:#fff;border-top:2px solid var(--ink);
+  padding:14px 0}
+.picks .wrap{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+#summary{flex:1;min-width:200px;font-size:12.5px;color:var(--mid);
+  word-break:break-word}
+#summary b{color:var(--ink)}
+.picks button{font:inherit;font-size:12px;padding:7px 14px;border-radius:5px;
+  border:1px solid var(--line);background:#fff;cursor:pointer}
+.picks button:hover{border-color:var(--mid)}
+.picks button.pri{background:var(--ink);color:#fff;border-color:var(--ink)}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <h1>Layout options — pick one per section</h1>
+    <p>Click an option to select it. "NOW" = what the live page currently uses.
+       Read your picks off the bar at the bottom and send them to me.</p>
+  </div>
+</header>
+
+<main class="wrap">
+
+<!-- 1 ─ HERO ──────────────────────────────────────────────────── -->
+<section class="sec" data-sec="1" data-name="Hero">
+  <div class="sec-head"><span class="sec-num">01</span><h2>Hero</h2></div>
+  <p class="sec-note">The only section guaranteed to be seen. Question: does the
+    chat screenshot sit beside the headline, or under it at full width?</p>
+  <div class="opts">
+    <div class="opt" data-opt="A">
+      <div class="opt-top"><span class="opt-id">A</span><span class="opt-name">Split</span><span class="tag now">NOW</span></div>
+      <div class="wf">
+        <div class="row f1">
+          <div class="col f1">
+            <div class="b h40">headline</div><div class="b h20">sub</div>
+            <div class="b cta h20">CTA</div><div class="b txt">members · free</div>
+          </div>
+          <div class="b f1 tall">chat screenshot</div>
+        </div>
+      </div>
+      <p class="opt-why">Balanced. Chat is visible without scrolling on desktop.</p>
+    </div>
+    <div class="opt" data-opt="B">
+      <div class="opt-top"><span class="opt-id">B</span><span class="opt-name">Centred + wide chat</span></div>
+      <div class="wf">
+        <div class="b h40">headline (centred)</div>
+        <div class="b h20">sub</div>
+        <div class="b cta h20">CTA</div>
+        <div class="b f1 h72">chat screenshot — full width</div>
+      </div>
+      <p class="opt-why">Headline hits harder. Chat becomes the scroll reward.</p>
+    </div>
+    <div class="opt" data-opt="C">
+      <div class="opt-top"><span class="opt-id">C</span><span class="opt-name">Text + photo + chat</span></div>
+      <div class="wf">
+        <div class="row f1">
+          <div class="col f2">
+            <div class="b h40">headline</div><div class="b h20">sub</div>
+            <div class="b cta h20">CTA</div>
+          </div>
+          <div class="col f1">
+            <div class="b h40">Saurabh photo</div>
+            <div class="b f1">chat</div>
+          </div>
+        </div>
+      </div>
+      <p class="opt-why">Face + room together. Risk: busier, and re-centres on him.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 2 ─ MARKET STRIP ──────────────────────────────────────────── -->
+<section class="sec" data-sec="2" data-name="Market strip">
+  <div class="sec-head"><span class="sec-num">02</span><h2>Live market strip</h2></div>
+  <p class="sec-note">Currently shows the same three instruments the snapshot
+    section shows lower down. Worth deciding whether it earns its space.</p>
+  <div class="opts">
+    <div class="opt" data-opt="A">
+      <div class="opt-top"><span class="opt-id">A</span><span class="opt-name">Scrolling ticker</span><span class="tag now">NOW</span></div>
+      <div class="wf"><div class="b solid h28">◄ GOLD ▲ · SILVER ▼ · CRUDE ▲ ►</div>
+        <div class="b txt">disclaimer line</div><div class="b f1 txt" style="min-height:60px"></div></div>
+      <p class="opt-why">Reads as a live pulse. Cheapest of the three.</p>
+    </div>
+    <div class="opt" data-opt="B">
+      <div class="opt-top"><span class="opt-id">B</span><span class="opt-name">Three static tiles</span></div>
+      <div class="wf"><div class="g3"><div class="b h40">GOLD<br>▲0.4%</div><div class="b h40">SILVER<br>▼0.2%</div><div class="b h40">CRUDE<br>▲0.1%</div></div>
+        <div class="b txt">disclaimer</div><div class="b f1 txt" style="min-height:48px"></div></div>
+      <p class="opt-why">Easier to read at a glance. Takes more height.</p>
+    </div>
+    <div class="opt" data-opt="C">
+      <div class="opt-top"><span class="opt-id">C</span><span class="opt-name">Remove it</span></div>
+      <div class="wf"><div class="b txt" style="min-height:0">— nothing here —</div>
+        <div class="b f1" style="min-height:110px">hero flows straight<br>into community</div></div>
+      <p class="opt-why">Kills the duplication. Snapshot lower down still shows prices.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 3 ─ COMMUNITY ─────────────────────────────────────────────── -->
+<section class="sec" data-sec="3" data-name="Inside the community">
+  <div class="sec-head"><span class="sec-num">03</span><h2>Inside the community</h2></div>
+  <p class="sec-note">The merged section — weekly rhythm plus the two chat
+    screenshots. Question is how the timetable reads.</p>
+  <div class="opts">
+    <div class="opt" data-opt="A">
+      <div class="opt-top"><span class="opt-id">A</span><span class="opt-name">5-column strip</span><span class="tag now">NOW</span></div>
+      <div class="wf"><div class="b txt">heading + sub</div>
+        <div class="g5"><div class="b h56">Mon–Fri</div><div class="b h56">9:15</div><div class="b h56">close</div><div class="b h56">Sat</div><div class="b h56">Sun</div></div>
+        <div class="b txt">culture line</div>
+        <div class="g2"><div class="b h40">screenshot</div><div class="b h40">screenshot</div></div></div>
+      <p class="opt-why">Compact. On mobile it stacks into 5 tall blocks.</p>
+    </div>
+    <div class="opt" data-opt="B">
+      <div class="opt-top"><span class="opt-id">B</span><span class="opt-name">Vertical timeline</span></div>
+      <div class="wf"><div class="b txt">heading + sub</div>
+        <div class="row"><div class="b" style="width:52px">8:30</div><div class="b f1">pre-market thread</div></div>
+        <div class="row"><div class="b" style="width:52px">9:15</div><div class="b f1">live hours</div></div>
+        <div class="row"><div class="b" style="width:52px">close</div><div class="b f1">review</div></div>
+        <div class="row"><div class="b" style="width:52px">Sat</div><div class="b f1">outlook</div></div>
+        <div class="g2"><div class="b h28">shot</div><div class="b h28">shot</div></div></div>
+      <p class="opt-why">Reads like a real day. Best mobile behaviour of the three.</p>
+    </div>
+    <div class="opt" data-opt="C">
+      <div class="opt-top"><span class="opt-id">C</span><span class="opt-name">Timetable + sticky shots</span></div>
+      <div class="wf"><div class="b txt">heading</div>
+        <div class="row f1"><div class="col f1">
+            <div class="b h20">8:30</div><div class="b h20">9:15</div>
+            <div class="b h20">close</div><div class="b h20">Sat</div><div class="b h20">Sun</div>
+          </div><div class="b f1 tall">screenshots<br>(sticky)</div></div></div>
+      <p class="opt-why">Screenshots stay in view while the timetable scrolls.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 4 ─ SNAPSHOT ──────────────────────────────────────────────── -->
+<section class="sec" data-sec="4" data-name="Market snapshot">
+  <div class="sec-head"><span class="sec-num">04</span><h2>Market snapshot</h2></div>
+  <p class="sec-note">Tallest section on the page (~1140px). Options B and C
+    both shorten it.</p>
+  <div class="opts">
+    <div class="opt" data-opt="A">
+      <div class="opt-top"><span class="opt-id">A</span><span class="opt-name">Cards over chart</span><span class="tag now">NOW</span></div>
+      <div class="wf"><div class="g3"><div class="b h28">gold</div><div class="b h28">silver</div><div class="b h28">crude</div></div>
+        <div class="b h20">tabs</div><div class="b f1 h72">big chart</div>
+        <div class="b txt">community link</div></div>
+      <p class="opt-why">Everything visible. Also the tallest.</p>
+    </div>
+    <div class="opt" data-opt="B">
+      <div class="opt-top"><span class="opt-id">B</span><span class="opt-name">Chart beside cards</span></div>
+      <div class="wf"><div class="row f1"><div class="col f2"><div class="b h20">tabs</div><div class="b f1 tall">big chart</div></div>
+          <div class="col f1"><div class="b f1">gold</div><div class="b f1">silver</div><div class="b f1">crude</div></div></div>
+        <div class="b txt">community link</div></div>
+      <p class="opt-why">Roughly 300px shorter. Tighter on mobile though.</p>
+    </div>
+    <div class="opt" data-opt="C">
+      <div class="opt-top"><span class="opt-id">C</span><span class="opt-name">Cards only</span></div>
+      <div class="wf"><div class="b txt">heading</div>
+        <div class="g3"><div class="b h56">gold</div><div class="b h56">silver</div><div class="b h56">crude</div></div>
+        <div class="b txt">community link</div><div class="b f1 txt" style="min-height:34px"></div></div>
+      <p class="opt-why">Halves the section and the page weight. Loses the big chart.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 5 ─ VOICES ────────────────────────────────────────────────── -->
+<section class="sec" data-sec="5" data-name="Member voices">
+  <div class="sec-head"><span class="sec-num">05</span><h2>Member voices</h2></div>
+  <p class="sec-note">The section I flagged as optional. Option D drops it and
+    lets §3's screenshots carry the proof.</p>
+  <div class="opts" style="grid-template-columns:repeat(4,1fr)">
+    <div class="opt" data-opt="A">
+      <div class="opt-top"><span class="opt-id">A</span><span class="opt-name">2×2 cards</span><span class="tag now">NOW</span></div>
+      <div class="wf"><div class="b txt">heading</div>
+        <div class="g2"><div class="b h40">quote</div><div class="b h40">quote</div><div class="b h40">quote</div><div class="b h40">quote</div></div></div>
+      <p class="opt-why">Standard. Weakest form of proof.</p>
+    </div>
+    <div class="opt" data-opt="B">
+      <div class="opt-top"><span class="opt-id">B</span><span class="opt-name">Screenshot scroll</span></div>
+      <div class="wf"><div class="b txt">heading</div>
+        <div class="row f1"><div class="b f1 tall">shot</div><div class="b f1 tall">shot</div><div class="b f1 tall">shot</div></div>
+        <div class="b txt">◄ swipe ►</div></div>
+      <p class="opt-why">Real message screenshots. Most believable option.</p>
+    </div>
+    <div class="opt" data-opt="C">
+      <div class="opt-top"><span class="opt-id">C</span><span class="opt-name">1 big + 3 small</span></div>
+      <div class="wf"><div class="b h56">featured quote</div>
+        <div class="g3"><div class="b h28">q</div><div class="b h28">q</div><div class="b h28">q</div></div></div>
+      <p class="opt-why">Works if one quote is much stronger than the rest.</p>
+    </div>
+    <div class="opt" data-opt="D">
+      <div class="opt-top"><span class="opt-id">D</span><span class="opt-name">Remove</span></div>
+      <div class="wf"><div class="b txt" style="min-height:0">— cut —</div>
+        <div class="b f1" style="min-height:110px">§3 screenshots<br>do this job</div></div>
+      <p class="opt-why">Page loses ~630px and one weak section.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 6 ─ ABOUT ─────────────────────────────────────────────────── -->
+<section class="sec" data-sec="6" data-name="About Saurabh">
+  <div class="sec-head"><span class="sec-num">06</span><h2>About Saurabh</h2></div>
+  <p class="sec-note">Placement in the page stays the same either way — this is
+    only about the internal layout.</p>
+  <div class="opts">
+    <div class="opt" data-opt="A">
+      <div class="opt-top"><span class="opt-id">A</span><span class="opt-name">Photo left</span><span class="tag now">NOW</span></div>
+      <div class="wf"><div class="row f1"><div class="b f1 tall">photo 4:5</div>
+        <div class="col f2"><div class="b h20">heading</div><div class="b h40">bio</div>
+          <div class="g2"><div class="b h20">stat</div><div class="b h20">stat</div></div></div></div></div>
+      <p class="opt-why">Photo leads. Conventional and calm.</p>
+    </div>
+    <div class="opt" data-opt="B">
+      <div class="opt-top"><span class="opt-id">B</span><span class="opt-name">Photo right</span></div>
+      <div class="wf"><div class="row f1"><div class="col f2"><div class="b h20">heading</div><div class="b h40">bio</div>
+          <div class="g2"><div class="b h20">stat</div><div class="b h20">stat</div></div></div>
+        <div class="b f1 tall">photo 4:5</div></div></div>
+      <p class="opt-why">Words lead. Reads better after a text-heavy section above.</p>
+    </div>
+    <div class="opt" data-opt="C">
+      <div class="opt-top"><span class="opt-id">C</span><span class="opt-name">Centred, stats row</span></div>
+      <div class="wf"><div class="b h40" style="margin-inline:auto;width:60px">photo</div>
+        <div class="b h20">heading</div><div class="b h28">bio</div>
+        <div class="g4"><div class="b h20">stat</div><div class="b h20">stat</div><div class="b h20">stat</div><div class="b h20">stat</div></div></div>
+      <p class="opt-why">More formal. Slightly more "personal brand" than "host".</p>
+    </div>
+  </div>
+</section>
+
+<!-- 7 ─ FIT ───────────────────────────────────────────────────── -->
+<section class="sec" data-sec="7" data-name="Who it's for">
+  <div class="sec-head"><span class="sec-num">07</span><h2>Who it's for / isn't</h2></div>
+  <p class="sec-note">Content stays the same; only how strongly the "don't join"
+    half is set against the other.</p>
+  <div class="opts">
+    <div class="opt" data-opt="A">
+      <div class="opt-top"><span class="opt-id">A</span><span class="opt-name">Two cards</span><span class="tag now">NOW</span></div>
+      <div class="wf"><div class="b txt">heading</div>
+        <div class="row f1"><div class="b f1 tall">✓ join if</div><div class="b f1 tall">✕ don't join if</div></div>
+        <div class="b txt">house rules</div></div>
+      <p class="opt-why">Clear opposition. Equal visual weight.</p>
+    </div>
+    <div class="opt" data-opt="B">
+      <div class="opt-top"><span class="opt-id">B</span><span class="opt-name">One mixed list</span></div>
+      <div class="wf"><div class="b txt">heading</div>
+        <div class="b h20">✓ you trade seriously</div><div class="b h20">✓ you'll discuss</div>
+        <div class="b h20">✕ you want tips</div><div class="b h20">✕ you'll promote</div>
+        <div class="b txt">house rules</div></div>
+      <p class="opt-why">Softer. Loses some of the "we have standards" punch.</p>
+    </div>
+    <div class="opt" data-opt="C">
+      <div class="opt-top"><span class="opt-id">C</span><span class="opt-name">Two full bands</span></div>
+      <div class="wf"><div class="b h56">✓ JOIN IF — full-width band</div>
+        <div class="b h56 solid">✕ DON'T JOIN IF — full-width band</div>
+        <div class="b txt">house rules</div></div>
+      <p class="opt-why">Boldest. The "don't" band is hard to skim past.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 8 ─ FEED ──────────────────────────────────────────────────── -->
+<section class="sec" data-sec="8" data-name="From the feed">
+  <div class="sec-head"><span class="sec-num">08</span><h2>From the feed (Instagram)</h2></div>
+  <p class="sec-note">All options link out to Instagram — none embed a player.</p>
+  <div class="opts">
+    <div class="opt" data-opt="A">
+      <div class="opt-top"><span class="opt-id">A</span><span class="opt-name">Scroll strip</span><span class="tag now">NOW</span></div>
+      <div class="wf"><div class="b txt">heading + view all</div>
+        <div class="row f1"><div class="b f1 tall">9:16</div><div class="b f1 tall">9:16</div><div class="b f1 tall">9:16</div><div class="b f1 tall">9:16</div></div>
+        <div class="b txt">◄ swipe ►</div></div>
+      <p class="opt-why">Feels like a feed. Holds 5+ without adding height.</p>
+    </div>
+    <div class="opt" data-opt="B">
+      <div class="opt-top"><span class="opt-id">B</span><span class="opt-name">3-up grid</span></div>
+      <div class="wf"><div class="b txt">heading</div>
+        <div class="g3"><div class="b tall">9:16</div><div class="b tall">9:16</div><div class="b tall">9:16</div></div>
+        <div class="b txt">view all →</div></div>
+      <p class="opt-why">Bigger thumbnails, all visible. Caps you at 3.</p>
+    </div>
+    <div class="opt" data-opt="C">
+      <div class="opt-top"><span class="opt-id">C</span><span class="opt-name">1 featured + 4</span></div>
+      <div class="wf"><div class="row f1"><div class="b f1 tall">featured reel</div>
+        <div class="g2 f1"><div class="b h40">9:16</div><div class="b h40">9:16</div><div class="b h40">9:16</div><div class="b h40">9:16</div></div></div></div>
+      <p class="opt-why">Good if one reel is his best-performing piece.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 9 ─ CHANNELS ──────────────────────────────────────────────── -->
+<section class="sec" data-sec="9" data-name="Channels">
+  <div class="sec-head"><span class="sec-num">09</span><h2>Channels</h2></div>
+  <p class="sec-note">How much extra weight Telegram gets over the others.</p>
+  <div class="opts">
+    <div class="opt" data-opt="A">
+      <div class="opt-top"><span class="opt-id">A</span><span class="opt-name">4 equal cards</span><span class="tag now">NOW</span></div>
+      <div class="wf"><div class="b txt">heading</div>
+        <div class="g4"><div class="b tall solid">TG</div><div class="b tall">IG</div><div class="b tall">YT</div><div class="b tall">X</div></div></div>
+      <p class="opt-why">Telegram tinted but same size. Even, calm.</p>
+    </div>
+    <div class="opt" data-opt="B">
+      <div class="opt-top"><span class="opt-id">B</span><span class="opt-name">Telegram hero</span></div>
+      <div class="wf"><div class="b txt">heading</div>
+        <div class="row f1"><div class="b f2 tall solid">TELEGRAM<br>the community</div>
+          <div class="col f1"><div class="b f1">IG</div><div class="b f1">YT</div><div class="b f1">X</div></div></div></div>
+      <p class="opt-why">Clearest hierarchy. Telegram is obviously the main door.</p>
+    </div>
+    <div class="opt" data-opt="C">
+      <div class="opt-top"><span class="opt-id">C</span><span class="opt-name">List rows</span></div>
+      <div class="wf"><div class="b txt">heading</div>
+        <div class="b h20 solid">TG — the community — 000 members →</div>
+        <div class="b h20">IG — reels — 000 →</div>
+        <div class="b h20">YT — breakdowns — 000 →</div>
+        <div class="b h20">X — short takes — 000 →</div></div>
+      <p class="opt-why">Most compact. Least visual, most scannable.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 10 ─ FAQ ──────────────────────────────────────────────────── -->
+<section class="sec" data-sec="10" data-name="FAQ">
+  <div class="sec-head"><span class="sec-num">10</span><h2>FAQ</h2></div>
+  <p class="sec-note">8 questions. Currently ~806px tall closed.</p>
+  <div class="opts">
+    <div class="opt" data-opt="A">
+      <div class="opt-top"><span class="opt-id">A</span><span class="opt-name">One column</span><span class="tag now">NOW</span></div>
+      <div class="wf"><div class="b txt">heading</div>
+        <div class="b h20">Q + &nbsp;</div><div class="b h20">Q +</div><div class="b h20">Q +</div>
+        <div class="b h20">Q +</div><div class="b h20">Q +</div></div>
+      <p class="opt-why">Easiest to read. Tall.</p>
+    </div>
+    <div class="opt" data-opt="B">
+      <div class="opt-top"><span class="opt-id">B</span><span class="opt-name">Two columns</span></div>
+      <div class="wf"><div class="b txt">heading</div>
+        <div class="g2"><div class="b h20">Q +</div><div class="b h20">Q +</div>
+          <div class="b h20">Q +</div><div class="b h20">Q +</div>
+          <div class="b h20">Q +</div><div class="b h20">Q +</div></div></div>
+      <p class="opt-why">Halves the height. Opening one shifts the other column.</p>
+    </div>
+    <div class="opt" data-opt="C">
+      <div class="opt-top"><span class="opt-id">C</span><span class="opt-name">All open</span></div>
+      <div class="wf"><div class="b txt">heading</div>
+        <div class="b h28">Q<br>answer</div><div class="b h28">Q<br>answer</div><div class="b h28">Q<br>answer</div></div>
+      <p class="opt-why">Best for SEO — text is in the page, not behind a click. Much taller.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 11 ─ CLOSE ────────────────────────────────────────────────── -->
+<section class="sec" data-sec="11" data-name="Close">
+  <div class="sec-head"><span class="sec-num">11</span><h2>Close</h2></div>
+  <p class="sec-note">The final CTA — the second and last loud button on the page.</p>
+  <div class="opts">
+    <div class="opt" data-opt="A">
+      <div class="opt-top"><span class="opt-id">A</span><span class="opt-name">Centred</span><span class="tag now">NOW</span></div>
+      <div class="wf"><div class="b h28">You don't have to trade alone.</div>
+        <div class="b h20">one line</div><div class="b cta h28" style="margin-inline:auto;width:120px">CTA</div>
+        <div class="b txt">members · free</div></div>
+      <p class="opt-why">Calm and conventional. Nothing competes with the button.</p>
+    </div>
+    <div class="opt" data-opt="B">
+      <div class="opt-top"><span class="opt-id">B</span><span class="opt-name">Split</span></div>
+      <div class="wf"><div class="row f1" style="align-items:center">
+        <div class="col f2"><div class="b h28">headline</div><div class="b h20">one line</div></div>
+        <div class="col f1"><div class="b cta h28">CTA</div><div class="b txt">free</div></div></div></div>
+      <p class="opt-why">Shorter. Button sits away from the centre of attention.</p>
+    </div>
+    <div class="opt" data-opt="C">
+      <div class="opt-top"><span class="opt-id">C</span><span class="opt-name">Chat backdrop</span></div>
+      <div class="wf"><div class="b f1 tall" style="position:relative">faded chat bubbles behind
+        <span style="position:absolute;inset:auto 20% 12px" class="b cta h20">CTA</span></div></div>
+      <p class="opt-why">Ends on the room itself. Risk: busy behind a button.</p>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<div class="picks">
+  <div class="wrap">
+    <div id="summary">Nothing picked yet — everything stays as it is now.</div>
+    <button id="reset">Reset</button>
+    <button id="copy" class="pri">Copy picks</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  var KEY='lmbs-wireframe-picks';
+  var picks={};
+  try{ picks=JSON.parse(localStorage.getItem(KEY)||'{}'); }catch(e){ picks={}; }
+
+  var secs=[].slice.call(document.querySelectorAll('.sec'));
+
+  function render(){
+    secs.forEach(function(sec){
+      var id=sec.getAttribute('data-sec');
+      [].forEach.call(sec.querySelectorAll('.opt'),function(o){
+        o.classList.toggle('is-picked', picks[id]===o.getAttribute('data-opt'));
+      });
+    });
+    var lines=secs.filter(function(s){return picks[s.getAttribute('data-sec')];})
+      .map(function(s){
+        return s.getAttribute('data-sec')+'. '+s.getAttribute('data-name')+' → '
+             + picks[s.getAttribute('data-sec')];
+      });
+    var box=document.getElementById('summary');
+    box.innerHTML = lines.length
+      ? '<b>'+lines.length+'/'+secs.length+' picked:</b> '+lines.join('&nbsp; · &nbsp;')
+      : 'Nothing picked yet — everything stays as it is now.';
+    try{ localStorage.setItem(KEY,JSON.stringify(picks)); }catch(e){}
+  }
+
+  document.addEventListener('click',function(e){
+    var opt=e.target.closest ? e.target.closest('.opt') : null;
+    if(!opt) return;
+    var id=opt.closest('.sec').getAttribute('data-sec');
+    var val=opt.getAttribute('data-opt');
+    if(picks[id]===val) delete picks[id]; else picks[id]=val;   // click again to clear
+    render();
+  });
+
+  document.getElementById('reset').addEventListener('click',function(){
+    picks={}; render();
+  });
+
+  document.getElementById('copy').addEventListener('click',function(){
+    var txt=secs.filter(function(s){return picks[s.getAttribute('data-sec')];})
+      .map(function(s){
+        return s.getAttribute('data-sec')+'. '+s.getAttribute('data-name')+' → Option '
+             + picks[s.getAttribute('data-sec')];
+      }).join('\n') || '(nothing picked)';
+    var btn=this;
+    function done(ok){ btn.textContent = ok?'Copied':'Copy failed'; setTimeout(function(){btn.textContent='Copy picks';},1400); }
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(txt).then(function(){done(true);},function(){done(false);});
+    } else {
+      var ta=document.createElement('textarea'); ta.value=txt; document.body.appendChild(ta);
+      ta.select(); try{ done(document.execCommand('copy')); }catch(e){ done(false); }
+      document.body.removeChild(ta);
+    }
+  });
+
+  render();
+})();
+</script>
+</body>
+</html>

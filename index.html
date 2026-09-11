@@ -1,0 +1,576 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LiveMarketBySaurabh — A community of traders who actually talk to each other</title>
+<meta name="description" content="A community of traders who discuss charts before the open and review them after the close. No tips, no spam.">
+<meta property="og:title" content="LiveMarketBySaurabh — A community of traders">
+<meta property="og:description" content="Charts discussed before the open, trades reviewed after the close.">
+<meta property="og:type" content="website">
+<!-- TODO og:image — 1200x630, show the community not just a portrait (doc §5) -->
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=Archivo:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+
+<!-- Runs before first paint. A theme applied from a deferred script would
+     flash the wrong colours on every load, which is worse than no toggle. -->
+<script>
+(function () {
+  var r = document.documentElement;
+  try {
+    var stored = localStorage.getItem('lmbs-theme');
+    var sysLight = window.matchMedia &&
+                   window.matchMedia('(prefers-color-scheme: light)').matches;
+    if (stored === 'light' || stored === 'dark') r.setAttribute('data-theme', stored);
+    r.setAttribute('data-resolved-theme', stored || (sysLight ? 'light' : 'dark'));
+  } catch (e) {
+    r.setAttribute('data-resolved-theme', 'dark');
+  }
+})();
+</script>
+</head>
+<body>
+
+<!-- ═══ 0. HEADER ═══════════════════════════════════════════════
+     Quiet. One outline button, never a filled one — the loud CTA
+     belongs to the hero and the close. (doc §0)                  -->
+<header class="site-header">
+  <div class="wrap header-inner">
+    <a class="wordmark" href="#top">LiveMarket<span>BySaurabh</span></a>
+    <!-- Filled in by script.js from Asia/Kolkata time, so it is correct
+         regardless of where the visitor is. -->
+    <span class="mkt-status" id="mkt-status" aria-live="polite">
+      <span class="mkt-dot"></span><span class="mkt-text"></span>
+    </span>
+    <nav class="header-nav">
+      <a href="#community">Community</a>
+      <a href="#about">About</a>
+    </nav>
+    <button class="theme-toggle" id="theme-toggle" type="button"
+            aria-label="Switch colour theme">
+      <svg class="ico-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+           stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+        <circle cx="12" cy="12" r="4"/>
+        <path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>
+      </svg>
+      <svg class="ico-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+           stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M21 13.2A9 9 0 1 1 10.8 3a7 7 0 0 0 10.2 10.2Z"/>
+      </svg>
+    </button>
+    <a class="btn btn-soft" href="#join"><span class="btn-full">Join the Community</span><span class="btn-short">Join</span></a>
+  </div>
+</header>
+
+<main id="top">
+
+  <!-- ═══ 1. HERO ═══════════════════════════════════════════════
+       Split layout: the promise on the left, the room itself on
+       the right. The chat mockup does the work a stock photo or a
+       chart graphic cannot — it says "community" in one glance.  -->
+  <section class="hero">
+    <!-- One bull, once, at 4%. Line art rather than a filled silhouette:
+         strokes stay legible at low opacity where a fill turns to mud. -->
+    <svg class="hero-bull" viewBox="0 0 200 150" fill="none" aria-hidden="true"
+         stroke="currentColor" stroke-width="2.2"
+         stroke-linecap="round" stroke-linejoin="round">
+      <!-- horns -->
+      <path d="M62 46C50 40 38 42 32 52c-2 4 1 8 5 6 6-3 12-5 20-4"/>
+      <path d="M138 46c12-6 24-4 30 6 2 4-1 8-5 6-6-3-12-5-20-4"/>
+      <!-- skull and muzzle -->
+      <path d="M62 46c0-8 8-14 18-16h40c10 2 18 8 18 16 0 14-2 26-8 36
+               -5 10-14 16-30 16s-25-6-30-16c-6-10-8-22-8-36Z"/>
+      <!-- eyes -->
+      <path d="M78 62h10M112 62h10"/>
+      <!-- nostrils and mouth -->
+      <path d="M90 88c0-4 4-6 10-6s10 2 10 6-4 6-10 6-10-2-10-6Z"/>
+      <path d="M94 108c4 3 8 3 12 0"/>
+      <!-- shoulders, suggesting the body without drawing it -->
+      <path d="M58 92c-14 6-24 18-28 34M170 126c-4-16-14-28-28-34"/>
+    </svg>
+
+    <div class="wrap hero-grid">
+
+      <div class="hero-copy reveal">
+        <h1>Trading is lonely.<br><em>It doesn't have to be.</em></h1>
+        <p class="sub">
+          Charts discussed before the open, trades reviewed after the close,
+          and a room full of traders who take it seriously.
+        </p>
+        <a class="btn btn-primary" href="#join">Join the Community on Telegram</a>
+        <p class="meta">
+          <strong class="num" data-placeholder>[X,XXX]</strong> members
+          &nbsp;·&nbsp; Free to join
+          &nbsp;·&nbsp; No tips, no spam, no paid pumping
+        </p>
+      </div>
+
+      <!-- Placeholder for a real, lightly-redacted Telegram screenshot.
+           Built in CSS so the layout is correct before the real asset
+           lands. REPLACE with the actual image. (doc §1) -->
+      <div class="hero-chat reveal" data-delay="2" aria-hidden="true">
+        <div class="chat-head">
+          <span class="chat-dot"></span>
+          <span class="chat-name">LiveMarketBySaurabh</span>
+          <span class="chat-count num" data-placeholder>[X,XXX] members</span>
+        </div>
+        <div class="chat-body">
+          <div class="bubble"><b>Saurabh</b>Gold holding 4,380 since Monday. Watching that level at open.</div>
+          <div class="bubble"><b>Rahul</b>Same. Rejected it twice last week — third test usually breaks.</div>
+          <div class="bubble"><b>Priya</b>Took a small short there yesterday, stopped out. Posted the chart above 👆</div>
+          <div class="bubble"><b>Saurabh</b>Good — that's exactly the one worth reviewing. Let's look at it after close.</div>
+          <div class="bubble typing"><span></span><span></span><span></span></div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ═══ 2. LIVE MARKET STRIP ══════════════════════════════════
+       The pulse. Full-bleed, thin, muted. Height reserved in CSS so
+       the third-party widget cannot shift the page. (doc §2)      -->
+  <section class="market-strip" aria-label="Live market prices">
+    <div id="ticker-strip" class="tradingview-widget-container" data-tv-widget="ticker-tape">
+      <div class="tradingview-widget-container__widget"></div>
+      <p class="tv-fallback strip-fallback" hidden>Prices unavailable right now.</p>
+    </div>
+    <p class="strip-note wrap">
+      International spot prices via TradingView — gold and silver per troy ounce,
+      crude per barrel. Not MCX rates. Indicative, for reference only — not for
+      transaction purposes.
+    </p>
+  </section>
+
+
+  <!-- ═══ 3. INSIDE THE COMMUNITY ═══════════════════════════════
+       Was two sections — a themes grid and a weekly timetable — which
+       said the same thing twice. Merged: the timetable carries it,
+       because named times are more concrete than named themes.
+       (doc §4 + §6)                                                -->
+  <section class="community" id="community">
+    <div class="wrap">
+      <p class="eyebrow">01 — Inside</p>
+      <h2>What actually happens inside</h2>
+      <p class="section-sub">
+        Not a broadcast channel. A room where people talk back — and the
+        rhythm is the same every week, so people plan around it.
+      </p>
+
+      <ol class="week-strip reveal">
+        <li>
+          <svg class="candle" viewBox="0 0 22 14" fill="none" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><g class="c-up"><path d="M3 2v10"/><rect x="1" y="4" width="4" height="6" rx="1" fill="currentColor" fill-opacity=".22"/></g><g class="c-down"><path d="M11 1v12"/><rect x="9" y="3" width="4" height="7" rx="1" fill="currentColor" fill-opacity=".22"/></g><g class="c-up"><path d="M19 3v9"/><rect x="17" y="5" width="4" height="5" rx="1" fill="currentColor" fill-opacity=".22"/></g></svg><span class="day">Mon–Fri · 8:30</span>
+          <p>Pre-market thread opens. Levels go up for discussion — Saurabh's read included, not handed down as a tip.</p>
+        </li>
+        <li>
+          <svg class="candle" viewBox="0 0 22 14" fill="none" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><g class="c-up"><path d="M3 2v10"/><rect x="1" y="4" width="4" height="6" rx="1" fill="currentColor" fill-opacity=".22"/></g><g class="c-down"><path d="M11 1v12"/><rect x="9" y="3" width="4" height="7" rx="1" fill="currentColor" fill-opacity=".22"/></g><g class="c-up"><path d="M19 3v9"/><rect x="17" y="5" width="4" height="5" rx="1" fill="currentColor" fill-opacity=".22"/></g></svg><span class="day">9:15 – 15:30</span>
+          <p>Live hours. Running commentary, questions, and trades put up to be sanity-checked before they're taken.</p>
+        </li>
+        <li>
+          <svg class="candle" viewBox="0 0 22 14" fill="none" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><g class="c-up"><path d="M3 2v10"/><rect x="1" y="4" width="4" height="6" rx="1" fill="currentColor" fill-opacity=".22"/></g><g class="c-down"><path d="M11 1v12"/><rect x="9" y="3" width="4" height="7" rx="1" fill="currentColor" fill-opacity=".22"/></g><g class="c-up"><path d="M19 3v9"/><rect x="17" y="5" width="4" height="5" rx="1" fill="currentColor" fill-opacity=".22"/></g></svg><span class="day">After close</span>
+          <p>Review. Trades posted and picked apart — what worked, what didn't, and why. Losses included.</p>
+        </li>
+        <li>
+          <svg class="candle" viewBox="0 0 22 14" fill="none" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><g class="c-up"><path d="M3 2v10"/><rect x="1" y="4" width="4" height="6" rx="1" fill="currentColor" fill-opacity=".22"/></g><g class="c-down"><path d="M11 1v12"/><rect x="9" y="3" width="4" height="7" rx="1" fill="currentColor" fill-opacity=".22"/></g><g class="c-up"><path d="M19 3v9"/><rect x="17" y="5" width="4" height="5" rx="1" fill="currentColor" fill-opacity=".22"/></g></svg><span class="day">Saturday</span>
+          <p>Weekly outlook, and the discussions worth re-reading from the week.</p>
+        </li>
+        <li>
+          <svg class="candle" viewBox="0 0 22 14" fill="none" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><g class="c-up"><path d="M3 2v10"/><rect x="1" y="4" width="4" height="6" rx="1" fill="currentColor" fill-opacity=".22"/></g><g class="c-down"><path d="M11 1v12"/><rect x="9" y="3" width="4" height="7" rx="1" fill="currentColor" fill-opacity=".22"/></g><g class="c-up"><path d="M19 3v9"/><rect x="17" y="5" width="4" height="5" rx="1" fill="currentColor" fill-opacity=".22"/></g></svg><span class="day">Sunday</span>
+          <p>Doubt-clearing. Beginners get the floor and nobody gets mocked for asking.</p>
+        </li>
+      </ol>
+
+      <p class="community-aside">
+        And running underneath all of it — memes, banter, Friday chaos.
+        Half the reason people stay.
+      </p>
+
+      <!-- REPLACE both with real, permission-cleared screenshots.
+           One should be a loss discussed honestly. (doc §6) -->
+      <div class="proof-grid reveal">
+        <figure class="proof">
+          <div class="proof-img" data-placeholder>[Screenshot: a genuine debate about a level]</div>
+          <figcaption>Nobody agrees on the first read. That's the point.</figcaption>
+        </figure>
+        <figure class="proof">
+          <div class="proof-img" data-placeholder>[Screenshot: a member posts a loss, three people reply usefully]</div>
+          <figcaption>We talk about the losses too. That's most of the value.</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ═══ 4. MARKET SNAPSHOT ════════════════════════════════════
+       Charts framed as "what the room is watching", not as a widget
+       dump. The text link below is the soft third CTA. (doc §5)   -->
+  <section class="snapshot" id="market">
+    <div class="wrap">
+      <p class="eyebrow">02 — Markets</p>
+      <h2>What the room is watching today</h2>
+
+      <p class="snapshot-stamp" id="mkt-stamp"></p>
+
+      <div class="cards reveal">
+        <article class="card" data-metal="gold">
+          <h3><svg class="metal-mark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 17h7l1.4-4H5.4L4 17Z"/><path d="M13 17h7l-1.4-4h-7L13 17Z"/><path d="M8.7 11h7l-1.4-4h-7l1.4 4Z"/></svg>Gold <span>XAU/USD · per troy ounce</span></h3>
+          <p class="spec">MCX GOLD · 1 kg lot · tick ₹1</p>
+          <div class="tradingview-widget-container tv-host" data-mini-symbol="OANDA:XAUUSD">
+            <div class="tradingview-widget-container__widget"></div>
+            <p class="tv-fallback" hidden>Unavailable</p>
+          </div>
+        </article>
+        <article class="card" data-metal="silver">
+          <h3><svg class="metal-mark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 17h7l1.4-4H5.4L4 17Z"/><path d="M13 17h7l-1.4-4h-7L13 17Z"/><path d="M8.7 11h7l-1.4-4h-7l1.4 4Z"/></svg>Silver <span>XAG/USD · per troy ounce</span></h3>
+          <p class="spec">MCX SILVER · 30 kg lot · tick ₹1</p>
+          <div class="tradingview-widget-container tv-host" data-mini-symbol="OANDA:XAGUSD">
+            <div class="tradingview-widget-container__widget"></div>
+            <p class="tv-fallback" hidden>Unavailable</p>
+          </div>
+        </article>
+        <article class="card" data-metal="crude">
+          <h3><svg class="metal-mark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M8 4h8M7 8h10M6.5 8c-.5 4-.5 8 0 12h11c.5-4 .5-8 0-12"/><path d="M9 8v12M15 8v12"/></svg>Crude <span>WTI · per barrel</span></h3>
+          <p class="spec">MCX CRUDEOIL · 100 bbl lot · tick ₹1</p>
+          <div class="tradingview-widget-container tv-host" data-mini-symbol="TVC:USOIL">
+            <div class="tradingview-widget-container__widget"></div>
+            <p class="tv-fallback" hidden>Unavailable</p>
+          </div>
+        </article>
+      </div>
+
+      <div class="chart-block reveal">
+        <div class="chart-tabs" role="tablist" aria-label="Instrument">
+          <button class="chart-tab is-active" role="tab" aria-selected="true" data-symbol="OANDA:XAUUSD">Gold</button>
+          <button class="chart-tab" role="tab" aria-selected="false" data-symbol="OANDA:XAGUSD">Silver</button>
+          <button class="chart-tab" role="tab" aria-selected="false" data-symbol="TVC:USOIL">Crude</button>
+        </div>
+        <div id="main-chart" class="tradingview-widget-container tv-host">
+          <div class="tradingview-widget-container__widget"></div>
+          <p class="tv-fallback" hidden>Chart unavailable right now.</p>
+        </div>
+      </div>
+
+      <p class="snapshot-link">
+        Gold's been the conversation all week in the group —
+        <a href="#join">join and see what people are saying →</a>
+      </p>
+      <p class="snapshot-note">
+        International spot prices via TradingView. Not MCX rates.
+        Indicative, for reference only — not for transaction purposes.
+      </p>
+    </div>
+  </section>
+
+
+  <!-- ═══ 5. MEMBER VOICES ══════════════════════════════════════
+       Chosen for belonging, not profit. No rupee figures anywhere —
+       they drag the page back toward tips-channel territory.      -->
+  <section class="voices">
+    <div class="wrap">
+      <p class="eyebrow">03 — Members</p>
+      <h2>What members say</h2>
+
+      <div class="voices-grid reveal">
+        <blockquote data-placeholder>
+          <p>[Replace with a real member quote — about finally having people to think out loud with]</p>
+          <cite>[Name], [City]</cite>
+        </blockquote>
+        <blockquote data-placeholder>
+          <p>[Replace — about a habit that changed, e.g. stopped revenge-trading because someone called it out]</p>
+          <cite>[Name], [City]</cite>
+        </blockquote>
+        <blockquote data-placeholder>
+          <p>[Replace — from a beginner who wasn't made to feel stupid for asking]</p>
+          <cite>[Name], [City]</cite>
+        </blockquote>
+        <blockquote data-placeholder>
+          <p>[Replace — about the discipline or process, not about profit]</p>
+          <cite>[Name], [City]</cite>
+        </blockquote>
+      </div>
+      <p class="voices-note">
+        Collect these as message screenshots where members allow it — they read
+        far more honestly than typed cards. Get permission in writing.
+      </p>
+    </div>
+  </section>
+
+
+  <!-- ═══ 6. ABOUT SAURABH ══════════════════════════════════════
+       Deliberately AFTER the community. The room is the hero; he is
+       the host. The "why" line is the trust anchor. (doc §8)      -->
+  <section class="about" id="about">
+    <div class="wrap about-grid">
+      <div class="about-photo" data-placeholder>[Photo of Saurabh — relaxed, at the desk, real]</div>
+      <div class="about-copy">
+        <p class="eyebrow">04 — The host</p>
+      <h2>Who runs this</h2>
+        <p class="lede" data-placeholder>
+          [Replace with Saurabh's own words, 120–180 words, first person: how long
+          he's traded, what he trades, his approach in one line — and most
+          importantly <em>why he built a community instead of a paid tips service</em>.
+          That last part is what makes the rest of this page believable.]
+        </p>
+        <ul class="creds">
+          <li><strong class="num" data-placeholder>[X]</strong> years trading</li>
+          <li data-placeholder>[Segments traded]</li>
+          <li><strong class="num" data-placeholder>[X,XXX]</strong> traders in the community</li>
+          <li data-placeholder>[Teaching / media background, if any]</li>
+        </ul>
+        <p class="about-handles">
+          <a href="#channels">Where to find him →</a>
+        </p>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ═══ 7. WHO IT'S FOR / ISN'T ═══════════════════════════════
+       Saying no is the clearest signal that the room has standards.
+       It also pre-filters joiners, so it works after the click too. -->
+  <section class="fit">
+    <div class="wrap">
+      <p class="eyebrow">05 — Fit</p>
+      <h2>Who this is for</h2>
+      <div class="fit-grid reveal">
+        <div class="fit-col fit-yes">
+          <h3>Join if</h3>
+          <ul>
+            <li>You trade, or you're learning seriously.</li>
+            <li>You want to discuss and improve, not just receive.</li>
+            <li>You can give as well as take.</li>
+            <li>You're fine being disagreed with.</li>
+          </ul>
+        </div>
+        <div class="fit-col fit-no">
+          <h3>Don't join if</h3>
+          <ul>
+            <li>You want guaranteed tips.</li>
+            <li>You want buy/sell calls to follow blindly.</li>
+            <li>You're here to promote your own service.</li>
+            <li>You expect profit without doing the work.</li>
+          </ul>
+        </div>
+      </div>
+      <p class="house-rules">
+        House rules: no tips-begging · no spam or promotions · no abuse · nothing
+        here is financial advice.
+      </p>
+    </div>
+  </section>
+
+
+  <!-- ═══ 8. FROM THE FEED ═════════════════════════════════════
+       Thumbnails that link OUT to Instagram — never embedded players.
+       A reel that plays here keeps the viewer here, which is the
+       opposite of the point. (doc §10)                            -->
+  <section class="feed">
+    <div class="wrap">
+      <div class="feed-head">
+        <div>
+          <p class="eyebrow">06 — Feed</p>
+      <h2>From the feed</h2>
+          <p class="section-sub">Short breakdowns, posted through the week.</p>
+        </div>
+        <a class="feed-all" href="#channels">View all on Instagram →</a>
+      </div>
+    </div>
+
+    <!-- Horizontal scroll-snap strip. Full-bleed on purpose so it
+         reads as a feed rather than a boxed grid. -->
+    <div class="reels wrap reveal" role="list">
+      <!-- REPLACE href with the real post URL and the poster with an
+           exported thumbnail. Instagram CDN URLs expire — don't hotlink. -->
+      <a class="reel" role="listitem" href="#" target="_blank" rel="noopener">
+        <span class="reel-thumb" data-placeholder>[Reel 1 poster]</span>
+        <span class="reel-cap">[One-line caption]</span>
+      </a>
+      <a class="reel" role="listitem" href="#" target="_blank" rel="noopener">
+        <span class="reel-thumb" data-placeholder>[Reel 2 poster]</span>
+        <span class="reel-cap">[One-line caption]</span>
+      </a>
+      <a class="reel" role="listitem" href="#" target="_blank" rel="noopener">
+        <span class="reel-thumb" data-placeholder>[Reel 3 poster]</span>
+        <span class="reel-cap">[One-line caption]</span>
+      </a>
+      <a class="reel" role="listitem" href="#" target="_blank" rel="noopener">
+        <span class="reel-thumb" data-placeholder>[Reel 4 poster]</span>
+        <span class="reel-cap">[One-line caption]</span>
+      </a>
+      <a class="reel" role="listitem" href="#" target="_blank" rel="noopener">
+        <span class="reel-thumb" data-placeholder>[Reel 5 poster]</span>
+        <span class="reel-cap">[One-line caption]</span>
+      </a>
+    </div>
+  </section>
+
+
+  <!-- ═══ 9. CHANNELS ══════════════════════════════════════════
+       A map, not a follow-us plea. Telegram card carries visual
+       weight; the rest are equal and quieter. (doc §11)           -->
+  <section class="channels" id="channels">
+    <div class="wrap">
+      <p class="eyebrow">07 — Channels</p>
+      <h2>Where we are</h2>
+      <p class="section-sub">
+        The conversation lives on Telegram. The rest is where we share what we're seeing.
+      </p>
+
+      <div class="channel-grid reveal">
+        <a class="channel is-primary" href="#join">
+          <span class="ch-icon">✈</span>
+          <span class="ch-name">Telegram</span>
+          <span class="ch-handle" data-placeholder>[@handle]</span>
+          <span class="ch-desc">The community itself — discussion, live hours, reviews.</span>
+          <span class="ch-count"><strong class="num" data-placeholder>[X,XXX]</strong> members</span>
+        </a>
+        <a class="channel" href="#" target="_blank" rel="noopener">
+          <span class="ch-icon">◎</span>
+          <span class="ch-name">Instagram</span>
+          <span class="ch-handle" data-placeholder>[@handle]</span>
+          <span class="ch-desc">Daily market snapshots, reels, quick lessons.</span>
+          <span class="ch-count"><strong class="num" data-placeholder>[X,XXX]</strong> followers</span>
+        </a>
+        <a class="channel" href="#" target="_blank" rel="noopener">
+          <span class="ch-icon">▶</span>
+          <span class="ch-name">YouTube</span>
+          <span class="ch-handle" data-placeholder>[@handle]</span>
+          <span class="ch-desc">Detailed breakdowns and the weekly outlook.</span>
+          <span class="ch-count"><strong class="num" data-placeholder>[X,XXX]</strong> subscribers</span>
+        </a>
+        <a class="channel" href="#" target="_blank" rel="noopener">
+          <span class="ch-icon">✕</span>
+          <span class="ch-name">X</span>
+          <span class="ch-handle" data-placeholder>[@handle]</span>
+          <span class="ch-desc">Short takes during market hours.</span>
+          <span class="ch-count"><strong class="num" data-placeholder>[X,XXX]</strong> followers</span>
+        </a>
+      </div>
+      <p class="channels-note">
+        Only list channels that are genuinely updated. A dead account costs more
+        trust than an absent one — delete any card you can't keep alive.
+      </p>
+    </div>
+  </section>
+
+
+  <!-- ═══ 10. FAQ ═══════════════════════════════════════════════
+       Native <details> — accessible, keyboard-operable, zero JS.
+       Also the page's SEO body. (doc §12)                         -->
+  <section class="faq">
+    <div class="wrap">
+      <p class="eyebrow">08 — Questions</p>
+      <h2>Questions people ask</h2>
+
+      <details>
+        <summary>Is it really free? Will it stay free?</summary>
+        <p data-placeholder>[Answer plainly. If it stays free, say so and say why.]</p>
+      </details>
+      <details>
+        <summary>Do you give buy/sell tips?</summary>
+        <p>
+          No — and this is the important one. We discuss levels, reasoning and
+          setups so you can make your own decision. Nobody here will tell you
+          what to buy. <span data-placeholder>[Add Saurabh's own words on why.]</span>
+        </p>
+      </details>
+      <details>
+        <summary>Are you SEBI registered?</summary>
+        <p data-placeholder>
+          [Answer honestly. If not registered, say so plainly — "trader and
+          educator, not a registered advisor" — and point to the disclaimer.]
+        </p>
+      </details>
+      <details>
+        <summary>I'm a complete beginner. Will I be out of my depth?</summary>
+        <p data-placeholder>[Answer — mention the Sunday doubt-clearing slot.]</p>
+      </details>
+      <details>
+        <summary>How active is it? Will my phone blow up?</summary>
+        <p data-placeholder>[Answer — rough message volume, and that mute exists.]</p>
+      </details>
+      <details>
+        <summary>Can I promote my own channel or services?</summary>
+        <p>No. It's the fastest way to be removed.</p>
+      </details>
+      <details>
+        <summary>Do you offer anything paid?</summary>
+        <p data-placeholder>[Answer. If yes, describe briefly and link to an enquiry — not a checkout.]</p>
+      </details>
+      <details>
+        <summary>What time does the day start?</summary>
+        <p>The pre-market thread opens around 8:30 AM IST, before the 9:15 open.</p>
+      </details>
+    </div>
+  </section>
+
+
+  <!-- ═══ 11. CLOSE ═════════════════════════════════════════════
+       The second and final loud CTA. Returns to the opening idea.  -->
+  <section class="close" id="join">
+    <div class="wrap">
+      <h2>You don't have to trade alone.</h2>
+      <p>
+        Come and read for a week before you say anything. That's how most
+        people start.
+      </p>
+      <!-- TODO real invite link + source tag: ?start=web_close -->
+      <a class="btn btn-primary btn-lg" href="#" target="_blank" rel="noopener">
+        Join the Community on Telegram
+      </a>
+      <p class="meta">
+        <strong class="num" data-placeholder>[X,XXX]</strong> members
+        &nbsp;·&nbsp; Free &nbsp;·&nbsp; No tips, no spam
+      </p>
+      <p class="close-alt">
+        Not ready yet? <a href="#channels">Follow along on Instagram or YouTube</a> instead.
+      </p>
+    </div>
+  </section>
+
+</main>
+
+
+<!-- ═══ 12. FOOTER ══════════════════════════════════════════════
+     Disclaimer is visible, not hidden behind a link. Required
+     before any paid ads run. (doc §14)                            -->
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <a class="wordmark" href="#top">LiveMarket<span>BySaurabh</span></a>
+        <p>A community of traders who actually talk to each other.</p>
+      </div>
+      <nav class="footer-links">
+        <a href="#community">Community</a>
+        <a href="#about">About</a>
+        <a href="#channels">Channels</a>
+        <a href="#" data-placeholder>[Privacy]</a>
+        <a href="#" data-placeholder>[Terms]</a>
+      </nav>
+      <div class="footer-contact">
+        <a href="#" data-placeholder>[email]</a>
+        <a href="#" data-placeholder>[business WhatsApp]</a>
+      </div>
+    </div>
+
+    <p class="disclaimer">
+      <strong>Risk disclaimer.</strong>
+      Trading in stocks, futures, options and commodities involves substantial
+      risk of loss. Everything shared in this community and on this site is for
+      educational and discussion purposes only and is <strong>not investment
+      advice</strong>. <span data-placeholder>[Registration status — state it
+      plainly.]</span> Past performance is not indicative of future results.
+      Please consult a SEBI-registered investment advisor before investing.
+    </p>
+
+    <p class="copyright">© <span id="year">2026</span> LiveMarketBySaurabh. All rights reserved.</p>
+  </div>
+</footer>
+
+<script src="script.js" defer></script>
+</body>
+</html>
