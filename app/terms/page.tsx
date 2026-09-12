@@ -25,7 +25,7 @@ export default function Page() {
         decisions. It is an educational and discussion space. It is{" "}
         <strong>not</strong> an advisory service, a portfolio management
         service, or a tips channel, and nothing in it is investment advice —
-        see the <a href="/disclaimer/">Disclaimer</a>, which forms part of
+        see the <a href="/disclaimer">Disclaimer</a>, which forms part of
         these terms.
       </p>
 

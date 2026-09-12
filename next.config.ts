@@ -3,26 +3,22 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   reactStrictMode: true,
 
-  /* Static export: the whole site is written out as plain HTML, CSS, JS and
-     images that any web host can serve — no Node process, no build step on
-     the server. This page has nothing that needs a server: every route is
-     pre-rendered, there are no API routes, no server actions and no
-     revalidation. */
-  output: "export",
+  /* Deployed on Vercel, so next/image runs its optimiser: every photograph
+     is served as WebP or AVIF, resized to whatever the markup asked for, and
+     cached at the edge. That matters more here than it looks — this page
+     carries three real photographs and most visitors arrive on mobile data.
 
-  /* Folder-per-route (out/privacy/index.html) rather than out/privacy.html.
-     Apache and Nginx serve the first shape natively at /privacy/; the second
-     needs a rewrite rule that shared hosting usually does not have. */
-  trailingSlash: true,
+     It was briefly built with `output: "export"` for plain file hosting.
+     Static export has no server, so the optimiser cannot run and every image
+     goes out at full size; on Vercel that would be about 500KB of needless
+     transfer per visit. If the site ever has to move back to cPanel-style
+     hosting, re-add:
 
-  images: {
-    /* Next's image optimiser needs a running server, which a static export
-       does not have. The source files are sized for their slots instead —
-       logo 200px, hero 920px, about 963px — so serving them unoptimised
-       costs about 650KB across the whole page rather than the 3.4MB the
-       originals would have. */
-    unoptimized: true,
-  },
+       output: "export",
+       trailingSlash: true,
+       images: { unoptimized: true },
+
+     and upload the out/ folder — see docs/deploy.md, which covers both. */
 };
 
 export default nextConfig;

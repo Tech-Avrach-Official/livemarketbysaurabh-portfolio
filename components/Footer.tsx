@@ -20,12 +20,10 @@ const SITEMAP = [
   { label: "Where we are", href: "/#channels" },
 ];
 
-/* Trailing slashes to match next.config's trailingSlash: true. Without them
-   every visit to a legal page costs a 301 to the slashed form first. */
 const LEGAL = [
-  { label: "Privacy Policy", href: "/privacy/" },
-  { label: "Terms of Use", href: "/terms/" },
-  { label: "Disclaimer", href: "/disclaimer/" },
+  { label: "Privacy Policy", href: "/privacy" },
+  { label: "Terms of Use", href: "/terms" },
+  { label: "Disclaimer", href: "/disclaimer" },
 ];
 
 export default function Footer() {

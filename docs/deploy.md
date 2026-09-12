@@ -1,74 +1,81 @@
 # Deploying
 
-The site is a **static export**. There is no Node process on the server, no
-database and no build step to run there — just files.
+Hosted on **Vercel**. Push to the branch and it builds and ships itself —
+there is nothing to upload by hand.
 
-## Every time you deploy
+## First time
 
-```bash
-npm install          # first time only
-npm run build        # writes the site into out/
+1. Go to vercel.com, sign in with the GitHub account that owns
+   `Tech-Avrach-Official/livemarketbysaurabh-portfolio`, and import the repo.
+2. Take every default. Vercel detects Next.js on its own — framework, build
+   command, output directory, all of it.
+3. Deploy. You get a `*.vercel.app` URL immediately.
+4. **Project → Settings → Domains** → add `livemarketbysaurabh.com` and
+   `www.livemarketbysaurabh.com`. Vercel shows the exact DNS records; add them
+   at whoever the domain is registered with. Certificates are issued
+   automatically once the records resolve, usually within the hour.
+
+After that, every push to `main` deploys. Pushes to any other branch get
+their own preview URL, which is the safe way to look at a change before it is
+live.
+
+## The domain is compiled in, not configured
+
+`lib/site.ts` holds `SITE_URL`. It ends up inside the canonical tags, the
+Open Graph image URL, the sitemap and the JSON-LD, so **changing the domain
+means rebuilding** — moving DNS alone is not enough.
+
+The default is `https://livemarketbysaurabh.com`. To build against a
+different host, set an environment variable in Vercel:
+
+```
+NEXT_PUBLIC_SITE_URL = https://staging.example.com
 ```
 
-Then upload **everything inside `out/`** into your hosting's web root —
-usually `public_html`. Upload the *contents*, not the folder: `index.html`
-must sit directly in `public_html`, not in `public_html/out/`.
+## Why images are not "exported"
 
-```
-public_html/
-├── index.html          ← home
-├── privacy/index.html
-├── terms/index.html
-├── disclaimer/index.html
-├── 404.html
-├── .htaccess           ← 404 page, gzip, cache headers
-├── _next/              ← CSS, JS, fonts, imported images
-├── art/  reels/        ← engravings and videos
-├── sitemap.xml  robots.txt
-└── opengraph-image.jpg  close-cta.jpg  about.jpg  logo.png  hero-saurabh.jpg
-```
+`next.config.ts` deliberately does **not** use `output: "export"`. A static
+export has no server, so Next's image optimiser cannot run and every
+photograph goes out at full size. On Vercel the optimiser converts them to
+WebP or AVIF and resizes them to whatever the markup asked for:
 
-About 15MB, most of it the five reel videos.
+| | source | served |
+|---|---|---|
+| `about.jpg` | 316 KB JPEG | **44 KB WebP** |
+| `hero-saurabh.jpg` | 284 KB JPEG | ~50 KB WebP |
 
-**Delete the old files first** on a redeploy. Filenames inside `_next/` are
-content-hashed, so stale ones are harmless but they accumulate.
+That is roughly half a megabyte per visit, on a page whose audience is mostly
+on mobile data.
 
-`.htaccess` lives in `public/.htaccess` and is copied into `out/` by every
-build. Edit it there, never in `out/` — `out/` is rebuilt from scratch and is
-not in version control.
+## If it ever has to move to cPanel-style hosting
 
-## If the host runs Nginx instead of Apache
+It can, with no code changes — only config. Add to `next.config.ts`:
 
-`.htaccess` is ignored. The only rule that actually matters is the 404 page:
-
-```nginx
-error_page 404 /404.html;
+```ts
+output: "export",
+trailingSlash: true,
+images: { unoptimized: true },
 ```
 
-Folder-per-route URLs (`/privacy/`) are served natively, so nothing else is
-needed.
+Then `npm run build` writes an `out/` folder. Upload **the contents of
+`out/`** into `public_html` — the contents, not the folder, so `index.html`
+sits directly in the web root. Copy `docs/apache/htaccess` in as
+`public_html/.htaccess` for the 404 page, gzip and cache headers; dotfiles
+are hidden in cPanel's file manager until you switch on "Show Hidden Files".
 
-## The domain is baked in at build time
+On that setup the legal links in `components/Footer.tsx` should carry
+trailing slashes (`/privacy/`) to match `trailingSlash: true`, or every visit
+costs a redirect.
 
-`lib/site.ts` holds `SITE_URL`, currently `https://livemarketbysaurabh.com`.
-It is compiled into the canonical tags, the Open Graph image URL, the sitemap
-and the JSON-LD — **changing the domain means rebuilding**, not just moving
-files. To build for a different host:
+## Checks after the first deploy
 
-```bash
-NEXT_PUBLIC_SITE_URL=https://staging.example.com npm run build
-```
-
-## Checks worth doing after the first upload
-
-1. `https://yourdomain.com/sitemap.xml` loads and lists four URLs
+1. `https://livemarketbysaurabh.com/sitemap.xml` loads and lists four URLs
 2. Paste the home URL into a WhatsApp chat — the preview image should appear
-3. `/privacy/`, `/terms/` and `/disclaimer/` all load
-4. Open on a phone: the chart section should not hijack scrolling
+3. `/privacy`, `/terms` and `/disclaimer` all load
+4. On a phone, scrolling past the chart section must not hijack the scroll
 
-## What is *not* in this deployment
+## Not included yet
 
-- No analytics. Nothing is measuring visits or joins yet.
-- No form handling. Nothing on the site posts anywhere.
-- `https://` must be enabled on the host; TradingView's widgets refuse to
-  load inside an insecure page.
+- **No analytics.** Nothing measures visits or joins. Vercel Analytics is one
+  switch in the dashboard if that is wanted.
+- **No form handling.** Nothing on the site posts anywhere.
