@@ -77,11 +77,28 @@ export default function ChatWidget() {
   const [sent, setSent] = useState(false);
   const [draft, setDraft] = useState("");
   const [placeholder, setPlaceholder] = useState(PROMPTS[0]);
+  /* Same cover as the charts. The message list scrolls, so a thumb that
+     meant to move the page gets trapped inside it. The cover takes that
+     gesture; a second tap within a moment hands the list over. */
+  const [guarded, setGuarded] = useState(true);
+  const [armed, setArmed] = useState(false);
+  const tapAt = useRef(0);
   const reduced = useRef(false);
 
   useEffect(() => {
     reduced.current = !!window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
   }, []);
+
+  useEffect(() => {
+    const el = root.current;
+    if (!el || guarded || !("IntersectionObserver" in window)) return;
+    const io = new IntersectionObserver(
+      ([e]) => { if (!e.isIntersecting) setGuarded(true); },
+      { threshold: 0 }
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, [guarded]);
 
   const push = useCallback((m: Msg) => {
     setMsgs((prev) => {
@@ -178,7 +195,7 @@ export default function ChatWidget() {
   }, [draft, sent, push]);
 
   return (
-    <figure className="chat-mock" ref={root}>
+    <figure className={`chat-mock${guarded ? " is-guarded" : ""}`} ref={root}>
       <div className="chat-head">
         <span className="chat-avatar">
           <Image src={logo} alt="" width={72} height={72} aria-hidden="true" />
@@ -210,6 +227,24 @@ export default function ChatWidget() {
           <div className="bubble typing" aria-hidden="true"><span /><span /><span /></div>
         )}
       </div>
+      {guarded && (
+        <button
+          type="button"
+          className={`tv-guard${armed ? " is-armed" : ""}`}
+          onClick={() => {
+            const now = Date.now();
+            if (now - tapAt.current < 450) {
+              setGuarded(false);
+              return;
+            }
+            tapAt.current = now;
+            setArmed(true);
+            window.setTimeout(() => setArmed(false), 450);
+          }}
+        >
+          <span>{armed ? "Tap again" : "Double-tap to read the chat"}</span>
+        </button>
+      )}
       </div>
 
       <form className={`chat-input ${openingDone && !sent ? "is-live" : ""}`} onSubmit={onSubmit}>

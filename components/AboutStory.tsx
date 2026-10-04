@@ -2,9 +2,6 @@ import Image from "next/image";
 import Header from "./Header";
 import Footer from "./Footer";
 import Reveal from "./Reveal";
-import MarketMarks from "./MarketMarks";
-import StatCards from "./StatCards";
-import SessionRail from "./SessionRail";
 import { TelegramMark, InstagramMark, YouTubeMark } from "./ChannelIcons";
 import { HOST, MEMBERS } from "@/lib/site";
 import { telegram, INSTAGRAM, YOUTUBE } from "@/lib/links";
@@ -24,22 +21,22 @@ const PLACES = [
   {
     brand: "telegram", name: "Telegram", Mark: TelegramMark,
     handle: "@live_market_by_saurabh",
-    desc: "The community itself. Pre-market levels, live hours and the post-market review — all of it discussion, none of it broadcast.",
-    action: "Join the community", primary: true,
+    desc: "The community itself. Pre-market levels, live hours and the post-market review.",
+    action: "Join",
     href: telegram("web_about"),
   },
   {
     brand: "instagram", name: "Instagram", Mark: InstagramMark,
     handle: "@livemarketbysaurabh",
     desc: "Daily market snapshots, short reels and quick lessons through the week.",
-    action: "Follow on Instagram",
+    action: "Follow",
     href: INSTAGRAM,
   },
   {
     brand: "youtube", name: "YouTube", Mark: YouTubeMark,
     handle: "@LivemarketbySaurabh",
     desc: "Detailed breakdowns and the weekly outlook, in full and without the hurry.",
-    action: "Subscribe on YouTube",
+    action: "Subscribe",
     href: YOUTUBE,
   },
 ];
@@ -50,103 +47,106 @@ export default function AboutStory() {
       <Reveal />
       <Header />
       <main id="top" className="about-page">
-        <section className="about">
-          <MarketMarks />
-          <div className="wrap">
-            <p className="eyebrow">About</p>
-            <div className="about-grid">
-              <figure className="about-photo">
-                <Image
-                  src={saurabh}
-                  alt={`${HOST.name}, who runs the LiveMarketBySaurabh community`}
-                  sizes="(max-width: 860px) 100vw, 380px"
-                  placeholder="blur"
-                  priority
-                />
-                <figcaption>
-                  <strong>{HOST.name}</strong>
-                  <span>{HOST.role}</span>
-                </figcaption>
-              </figure>
-
-              <div className="about-copy">
-                <h1>Who runs this</h1>
-                <div className="about-bio">
-                  <p className="lede">
-                    I&rsquo;ve been trading for over eleven years now, mostly
-                    commodities — gold, silver and crude. My approach is not
-                    complicated: I trade levels, I decide where I&rsquo;m getting
-                    out before I get in, and I&rsquo;m wrong often enough to have
-                    stopped pretending otherwise.
-                  </p>
-                  <p>
-                    I built this community because of how I learned. For the
-                    first few years I traded alone, and every bad decision I
-                    made was one nobody was there to question. What finally
-                    changed my results wasn&rsquo;t a better indicator — it was
-                    having people to argue with.
-                  </p>
-                  <p>
-                    I could sell tips instead. It would be easier and it would
-                    pay better. But a tip makes you dependent on me, and
-                    dependent traders don&rsquo;t last. So I share my own read,
-                    I explain the reasoning behind it, and I let the room pull
-                    it apart. Some days the room is right and I&rsquo;m not.
-                    That is rather the point.
-                  </p>
-                </div>
-                <StatCards members={MEMBERS} />
-              </div>
+        <section className="profile-hero">
+          <div className="wrap profile-hero-grid">
+            <div className="profile-lead">
+              <p className="eyebrow">About</p>
+              <h1>{HOST.name}</h1>
+              <p className="profile-role">{HOST.role}</p>
+              <p>
+                I&rsquo;ve been trading for over eleven years now, mostly
+                commodities — gold, silver and crude. My approach is not
+                complicated: I trade levels, I decide where I&rsquo;m getting
+                out before I get in, and I&rsquo;m wrong often enough to have
+                stopped pretending otherwise.
+              </p>
             </div>
+
+            <figure className="profile-portrait">
+              <span className="profile-plate" aria-hidden="true" />
+              <Image
+                src={saurabh}
+                alt={`${HOST.name}, who runs the LiveMarketBySaurabh community`}
+                sizes="(max-width: 800px) 78vw, 420px"
+                placeholder="blur"
+                priority
+              />
+            </figure>
           </div>
         </section>
 
-        <section className="about-week">
+        <section className="profile-essay">
+          <div className="wrap">
+            <p className="eyebrow">The reason</p>
+            <h2>Why a room, not a tip</h2>
+            <p>
+              I built this community because of how I learned. For the first
+              few years I traded alone, and every bad decision I made was one
+              nobody was there to question. What finally changed my results
+              wasn&rsquo;t a better indicator — it was having people to argue
+              with.
+            </p>
+            <p className="profile-point">
+              I could sell tips instead. It would be easier and it would pay
+              better. But a tip makes you dependent on me, and dependent
+              traders don&rsquo;t last. So I share my own read, I explain the
+              reasoning behind it, and I let the room pull it apart. Some days
+              the room is right and I&rsquo;m not. That is rather the point.
+            </p>
+          </div>
+        </section>
+
+        <section className="profile-facts" aria-label="A few facts">
+          <dl className="wrap">
+            <div>
+              <dt>11+</dt>
+              <dd>years trading</dd>
+            </div>
+            <div>
+              <dt>{MEMBERS}</dt>
+              <dd>traders in the room</dd>
+            </div>
+            <div>
+              <dt>Gold · Silver · Crude</dt>
+              <dd>what the room trades</dd>
+            </div>
+          </dl>
+        </section>
+
+        <section className="profile-week">
           <div className="wrap">
             <p className="eyebrow">The week</p>
-            <h2>The same rhythm, every week</h2>
-            <p className="section-sub">
-              Not a broadcast. A room people can plan around — levels before
-              the open, the day itself, and a review after the close that
-              includes the losses.
-            </p>
-            <SessionRail steps={WEEK} />
+            <h2>How a week actually runs</h2>
+            <ol className="profile-days">
+              {WEEK.map((step) => (
+                <li key={step.day}>
+                  <strong>{step.day}</strong>
+                  <span>{step.text}</span>
+                </li>
+              ))}
+            </ol>
           </div>
         </section>
 
-        <section className="about-find">
+        <section className="profile-places">
           <div className="wrap">
-            <p className="eyebrow">Find him</p>
-            <h2>Where the room actually is</h2>
-            <p className="section-sub">
-              The conversation lives on Telegram. Instagram and YouTube are
-              where the shorter notes and the longer breakdowns go.
-            </p>
-            <div className="channel-grid">
+            <p className="eyebrow">Find the room</p>
+            <h2>Three places, one conversation</h2>
+            <ul className="profile-links">
               {PLACES.map((c) => (
-                <a
-                  key={c.name}
-                  className={`channel ${c.primary ? "is-primary" : ""}`}
-                  data-brand={c.brand}
-                  href={c.href}
-                  target="_blank"
-                  rel="noopener"
-                >
-                  <span className="ch-beam" aria-hidden="true" />
-                  <span className="ch-icon"><c.Mark /></span>
-                  <span className="ch-name">{c.name}</span>
-                  <span className="ch-handle">{c.handle}</span>
-                  <span className="ch-desc">{c.desc}</span>
-                  <span className="ch-action">
-                    {c.action}
-                    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6"
-                         strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                      <path d="M2 8h11M9 4l4 4-4 4" />
-                    </svg>
-                  </span>
-                </a>
+                <li key={c.name}>
+                  <a href={c.href} target="_blank" rel="noopener" data-brand={c.brand}>
+                    <span className="profile-link-icon"><c.Mark /></span>
+                    <span className="profile-link-copy">
+                      <strong>{c.name}</strong>
+                      <em>{c.handle}</em>
+                      <span>{c.desc}</span>
+                    </span>
+                    <span className="profile-link-go">{c.action} →</span>
+                  </a>
+                </li>
               ))}
-            </div>
+            </ul>
             <p className="legal-back"><a href="/">← Back to the site</a></p>
           </div>
         </section>

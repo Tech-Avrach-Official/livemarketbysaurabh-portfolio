@@ -7,8 +7,7 @@ import { telegram } from "@/lib/links";
    not the way a brand would phrase them.
 
    "Are you SEBI registered?" has been removed at the owner's request. The
-   registration statement still belongs in the footer disclaimer, which is
-   where the legal wording lives and where it is still a blank.
+   registration statement lives on the Disclaimer page.
 
    Two answers below are marked and need real numbers only Saurabh has. */
 const FAQS: { q: string; a: React.ReactNode }[] = [

@@ -48,40 +48,27 @@ export default function Footer() {
             </div>
           </div>
 
-          <nav className="footer-col" aria-label="Sections">
-            <h3>The page</h3>
-            {SITEMAP.map((l) => (
-              <a key={l.href} href={l.href}>{l.label}</a>
-            ))}
-          </nav>
+          <div className="footer-links">
+            <nav className="footer-col" aria-label="Sections">
+              <h3>The page</h3>
+              {SITEMAP.map((l) => (
+                <a key={l.href} href={l.href}>{l.label}</a>
+              ))}
+            </nav>
 
-          <nav className="footer-col" aria-label="Legal">
-            <h3>Legal</h3>
-            {LEGAL.map((l) => (
-              <a key={l.label} href={l.href}>{l.label}</a>
-            ))}
-          </nav>
+            <nav className="footer-col" aria-label="Legal">
+              <h3>Legal</h3>
+              {LEGAL.map((l) => (
+                <a key={l.label} href={l.href}>{l.label}</a>
+              ))}
+            </nav>
+          </div>
 
           <div className="footer-col">
             <h3>Get in touch</h3>
             <a href={`mailto:${EMAIL}`}>{EMAIL}</a>
           </div>
         </div>
-
-        {/* Visible, never folded behind a link. Required before paid ads. */}
-        <p className="disclaimer">
-          <strong>Risk disclaimer.</strong> Trading in stocks, futures, options
-          and commodities involves substantial risk of loss and is not suitable
-          for every investor. Everything shared in this community and on this
-          site is for <strong>educational and discussion purposes only</strong>{" "}
-          and is not investment advice, nor a recommendation to buy or sell any
-          instrument.{" "}
-          <strong>Saurabh Sharma is not registered with SEBI</strong> as an
-          Investment Adviser or a Research Analyst; he is a trader and
-          educator.{" "}
-          Past performance is not indicative of future results. Please consult a
-          SEBI-registered investment adviser before investing.
-        </p>
 
         <div className="footer-foot">
           <p>© {new Date().getFullYear()} LiveMarketBySaurabh. All rights reserved.</p>
