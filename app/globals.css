@@ -564,10 +564,7 @@ h2 {
 
 
 .hero-grid {
-  display: grid;
-  grid-template-columns: 1.1fr .9fr;
-  gap: 56px;
-  align-items: center;
+  display: block;
 }
 
 /* Clipped, not hidden: display:none or visibility:hidden would take the
@@ -3230,8 +3227,10 @@ body {
     border-top: 0;
   }
   .hero-stats div,
+  .hero-stats div:first-child,
+  .hero-stats div:last-child,
   .hero-stats div + div {
-    padding: 12px 8px 11px;
+    padding: 16px 14px 14px;
     border: 1px solid var(--line);
     border-radius: 12px;
     background: var(--bg-raised);
