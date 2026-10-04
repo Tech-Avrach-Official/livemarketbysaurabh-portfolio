@@ -72,6 +72,7 @@ export default function About() {
             <StatCards members={MEMBERS} />
 
             <p className="about-handles">
+              <a href="/about">The full story →</a>
               <a href="/#channels">Where to find him →</a>
             </p>
           </div>

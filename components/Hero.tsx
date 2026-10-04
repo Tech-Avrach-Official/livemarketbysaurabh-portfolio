@@ -5,6 +5,18 @@ import { telegram } from "@/lib/links";
 export default function Hero() {
   return (
     <section className="hero">
+      <div className="hero-media" aria-hidden="true">
+        <video
+          className="hero-video"
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="auto"
+        >
+          <source src="/Trading-hero.mp4" type="video/mp4" />
+        </video>
+      </div>
       <div className="wrap hero-inner">
         <p className="hero-kicker hero-in">
           Telegram community

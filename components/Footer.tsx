@@ -16,7 +16,7 @@ const SOCIALS = [
 const SITEMAP = [
   { label: "Inside the community", href: "/#community" },
   { label: "What we're watching", href: "/#market" },
-  { label: "About Saurabh", href: "/#about" },
+  { label: "About Saurabh", href: "/about" },
   { label: "Where we are", href: "/#channels" },
 ];
 
