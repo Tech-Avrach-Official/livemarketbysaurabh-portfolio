@@ -1,3 +1,7 @@
+"use client";
+
+import { useLayoutEffect, useRef, useState } from "react";
+
 /* Marks drawn as candles rather than a tick and a cross.
 
    ✓ and ✕ are the two most generic symbols in interface design; on a page
@@ -43,18 +47,52 @@ const DONT = [
 ];
 
 export default function Fit() {
+  const root = useRef<HTMLElement>(null);
+  const [on, setOn] = useState(false);
+
+  useLayoutEffect(() => {
+    const el = root.current;
+    if (!el) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      setOn(true);
+      return;
+    }
+    let done = false;
+    let raf = 0;
+    const check = () => {
+      if (done) return;
+      const r = el.getBoundingClientRect();
+      const vh = window.innerHeight || document.documentElement.clientHeight;
+      if (!(r.bottom > vh * 0.12 && r.top < vh * 0.82)) return;
+      done = true;
+      cancelAnimationFrame(raf);
+      setOn(true);
+    };
+    const loop = () => {
+      check();
+      if (!done) raf = requestAnimationFrame(loop);
+    };
+    raf = requestAnimationFrame(loop);
+    window.addEventListener("scroll", check, { passive: true });
+    return () => {
+      done = true;
+      cancelAnimationFrame(raf);
+      window.removeEventListener("scroll", check);
+    };
+  }, []);
+
   return (
-    <section className="fit">
+    <section className={`fit${on ? " is-on" : ""}`} ref={root}>
       <div className="wrap">
-        <p className="eyebrow">05 — Fit</p>
-        <h2>Who this is for &mdash; and who it isn&rsquo;t</h2>
-        <p className="section-sub">
+        <p className="eyebrow fit-reveal">05 — Fit</p>
+        <h2 className="fit-reveal">Who this is for &mdash; and who it isn&rsquo;t</h2>
+        <p className="section-sub fit-reveal">
           Most pages like this try to be for everyone. This one would rather
           you knew before you joined.
         </p>
 
-        <div className="fit-grid reveal">
-          <div className="fit-col fit-yes">
+        <div className="fit-grid">
+          <div className="fit-col fit-yes fit-reveal">
             <h3>Join if</h3>
             <ul>
               {JOIN.map((t) => (
@@ -62,7 +100,7 @@ export default function Fit() {
               ))}
             </ul>
           </div>
-          <div className="fit-col fit-no" data-delay="1">
+          <div className="fit-col fit-no fit-reveal">
             <h3>Don&rsquo;t join if</h3>
             <ul>
               {DONT.map((t) => (
@@ -75,7 +113,7 @@ export default function Fit() {
         {/* The section's actual argument, said out loud. Turning people away
             is the strongest signal available that the room has a standard —
             but only if the page says that is what it is doing. */}
-        <p className="fit-line">
+        <p className="fit-line fit-reveal">
           The second list is the more important one. A room that will take
           anyone isn&rsquo;t worth being in.
         </p>

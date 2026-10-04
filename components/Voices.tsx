@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 
 /* ─────────────────────────────────────────────────────────────────────
    ⚠  SAMPLE CONTENT — NOT FOR LAUNCH.
@@ -24,95 +24,243 @@ const VOICES: { text: string; name: string; city: string; time: string; photo: s
     name: "Aman T", city: "Nagpur", time: "16:20", photo: "/voices/voice-aman.jpg" },
 ];
 
-const DWELL = 4600;
+const DWELL = 4800;
+const SLIDE = 620;
+
+function Card({
+  voice,
+  role,
+  run,
+}: {
+  voice: (typeof VOICES)[number];
+  role: "current" | "peek";
+  run?: number;
+}) {
+  return (
+    <figure className={`voice-card is-${role}`} aria-hidden={role !== "current"}>
+      <span className="voice-sheen" aria-hidden="true" />
+      <blockquote className="voice-quote">
+        <span className="voice-mark" aria-hidden="true">&ldquo;</span>
+        {voice.text}
+      </blockquote>
+      <figcaption className="voice-meta">
+        <img className="voice-avatar" src={voice.photo} alt="" />
+        <span className="voice-name">{voice.name}</span>
+        <span className="voice-city">{voice.city}</span>
+        <span className="voice-time">{voice.time}</span>
+      </figcaption>
+      {role === "current" && (
+        <div className="voice-progress" aria-hidden="true">
+          <span key={run} />
+        </div>
+      )}
+    </figure>
+  );
+}
 
 export default function Voices() {
-  const track = useRef<HTMLDivElement>(null);
-  const index = useRef(0);
+  const stage = useRef<HTMLDivElement>(null);
+  const root = useRef<HTMLElement>(null);
+  const activeRef = useRef(0);
+  const busy = useRef(false);
   const paused = useRef(false);
-  const lock = useRef(false);
+  const reduced = useRef(false);
+  const seen = useRef(false);
+  const timer = useRef(0);
+  const tracking = useRef(false);
+  const axis = useRef<"x" | "y" | null>(null);
+  const origin = useRef({ x: 0, y: 0, t: 0 });
+
   const [active, setActive] = useState(0);
+  const [peek, setPeek] = useState<number | null>(null);
+  const [dir, setDir] = useState<1 | -1>(1);
+  const [dragX, setDragX] = useState(0);
+  const [dragging, setDragging] = useState(false);
+  const [instant, setInstant] = useState(false);
+  const [held, setHeld] = useState(false);
+  const [on, setOn] = useState(false);
+  const [run, setRun] = useState(0);
 
-  const stride = () => {
-    const el = track.current;
-    const card = el?.querySelector<HTMLElement>(".voice-card");
-    if (!el || !card) return 0;
-    const gap = parseFloat(getComputedStyle(el).columnGap || getComputedStyle(el).gap) || 0;
-    return card.offsetWidth + gap;
-  };
+  const len = VOICES.length;
 
-  const go = (next: number) => {
-    const el = track.current;
-    const width = stride();
-    if (!el || !width) return;
-    const n = ((next % VOICES.length) + VOICES.length) % VOICES.length;
-    index.current = n;
-    setActive(n);
-    lock.current = true;
-    el.scrollTo({ left: n * width, behavior: "smooth" });
-    window.setTimeout(() => { lock.current = false; }, 700);
-  };
-
-  useEffect(() => {
-    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (reduce) return;
-    const id = window.setInterval(() => {
-      if (paused.current) return;
-      go(index.current + 1);
+  const arm = () => {
+    window.clearTimeout(timer.current);
+    if (reduced.current || !seen.current) return;
+    timer.current = window.setTimeout(() => {
+      if (paused.current || busy.current) {
+        arm();
+        return;
+      }
+      finish(1);
     }, DWELL);
-    return () => window.clearInterval(id);
+  };
+
+  const finish = (direction: 1 | -1, target?: number) => {
+    if (busy.current) return;
+    const next = target ?? (activeRef.current + direction + len) % len;
+    if (next === activeRef.current) return;
+    if (reduced.current) {
+      activeRef.current = next;
+      setActive(next);
+      setPeek(null);
+      setDragX(0);
+      setRun((n) => n + 1);
+      return;
+    }
+    const width = stage.current?.clientWidth || 1;
+    busy.current = true;
+    setDir(direction);
+    setPeek(next);
+    setDragging(false);
+    requestAnimationFrame(() => setDragX(direction === 1 ? -width : width));
+    window.setTimeout(() => {
+      setInstant(true);
+      setPeek(null);
+      setDragX(0);
+      activeRef.current = next;
+      setActive(next);
+      setRun((n) => n + 1);
+      requestAnimationFrame(() => {
+        setInstant(false);
+        busy.current = false;
+        paused.current = false;
+        setHeld(false);
+        arm();
+      });
+    }, SLIDE);
+  };
+
+  useLayoutEffect(() => {
+    const el = root.current;
+    if (!el) return;
+    reduced.current = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduced.current) {
+      seen.current = true;
+      setOn(true);
+      return;
+    }
+    let done = false;
+    let raf = 0;
+    const check = () => {
+      if (done) return;
+      const r = el.getBoundingClientRect();
+      const vh = window.innerHeight || document.documentElement.clientHeight;
+      if (!(r.bottom > vh * 0.15 && r.top < vh * 0.86)) return;
+      done = true;
+      cancelAnimationFrame(raf);
+      seen.current = true;
+      setOn(true);
+      setRun((n) => n + 1);
+      arm();
+    };
+    const loop = () => {
+      check();
+      if (!done) raf = requestAnimationFrame(loop);
+    };
+    check();
+    raf = requestAnimationFrame(loop);
+    window.addEventListener("scroll", check, { passive: true });
+    window.addEventListener("resize", check);
+    return () => {
+      done = true;
+      cancelAnimationFrame(raf);
+      window.clearTimeout(timer.current);
+      window.removeEventListener("scroll", check);
+      window.removeEventListener("resize", check);
+    };
   }, []);
 
-  const syncFromScroll = () => {
-    if (lock.current) return;
-    const el = track.current;
-    const width = stride();
-    if (!el || !width) return;
-    const n = Math.max(0, Math.min(VOICES.length - 1, Math.round(el.scrollLeft / width)));
-    if (n !== index.current) {
-      index.current = n;
-      setActive(n);
+  useEffect(() => () => window.clearTimeout(timer.current), []);
+
+  const hold = () => {
+    paused.current = true;
+    setHeld(true);
+    window.clearTimeout(timer.current);
+  };
+  const resume = () => {
+    paused.current = false;
+    setHeld(false);
+    arm();
+  };
+
+  const onPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (busy.current) return;
+    tracking.current = true;
+    axis.current = null;
+    origin.current = { x: e.clientX, y: e.clientY, t: performance.now() };
+    hold();
+  };
+
+  const onPointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (!tracking.current || busy.current) return;
+    const dx = e.clientX - origin.current.x;
+    const dy = e.clientY - origin.current.y;
+    if (!axis.current) {
+      if (Math.hypot(dx, dy) < 8) return;
+      axis.current = Math.abs(dx) > Math.abs(dy) ? "x" : "y";
+      if (axis.current === "y") {
+        tracking.current = false;
+        resume();
+        return;
+      }
+      stage.current?.setPointerCapture(e.pointerId);
+      setDragging(true);
+    }
+    if (axis.current !== "x") return;
+    const direction: 1 | -1 = dx < 0 ? 1 : -1;
+    setDir(direction);
+    setDragX(dx);
+    setPeek((activeRef.current + direction + len) % len);
+  };
+
+  const onPointerUp = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (!tracking.current && !dragging) return;
+    const dx = e.clientX - origin.current.x;
+    const dt = Math.max(16, performance.now() - origin.current.t);
+    tracking.current = false;
+    axis.current = null;
+    setDragging(false);
+    if (dx < -56 || dx / dt < -0.55) finish(1);
+    else if (dx > 56 || dx / dt > 0.55) finish(-1);
+    else {
+      setDragX(0);
+      setPeek(null);
+      resume();
     }
   };
 
-  const hold = () => { paused.current = true; };
-  const release = () => {
-    window.setTimeout(() => { paused.current = false; }, 5000);
-  };
+  const width = stage.current?.clientWidth || 1;
+  const fade = Math.min(1, Math.abs(dragX) / width);
 
   return (
-    <section className="voices">
+    <section className={`voices${on ? " is-on" : ""}`} ref={root}>
       <div className="wrap">
-        <p className="eyebrow">04 — Members</p>
-        <h2>What members say</h2>
-        <p className="section-sub">
+        <p className="eyebrow voice-reveal">04 — Members</p>
+        <h2 className="voice-reveal">What members say</h2>
+        <p className="section-sub voice-reveal">
           Not testimonials. Things people have actually said in the group.
         </p>
 
         <div
-          className="voice-track"
-          ref={track}
-          onScroll={syncFromScroll}
-          onPointerDown={hold}
-          onPointerUp={release}
-          onPointerCancel={release}
-          onMouseEnter={hold}
-          onMouseLeave={() => { paused.current = false; }}
+          className={`voice-stage voice-reveal${dragging ? " is-dragging" : ""}${instant ? " is-instant" : ""}${held ? " is-held" : ""}`}
+          ref={stage}
+          data-dir={dir}
+          style={{
+            ["--drag" as string]: `${dragX}px`,
+            ["--peek" as string]: dir === 1 ? "100%" : "-100%",
+            ["--fade" as string]: String(fade),
+            ["--dwell" as string]: `${DWELL}ms`,
+          }}
+          onPointerDown={onPointerDown}
+          onPointerMove={onPointerMove}
+          onPointerUp={onPointerUp}
+          onPointerCancel={onPointerUp}
         >
-          {VOICES.map((v) => (
-            <figure className="voice-card" key={v.name}>
-              <img className="voice-photo" src={v.photo} alt="" />
-              <blockquote className="voice-quote">{v.text}</blockquote>
-              <figcaption className="voice-meta">
-                <span className="voice-name">{v.name}</span>
-                <span className="voice-city">{v.city}</span>
-                <span className="voice-time">{v.time}</span>
-              </figcaption>
-            </figure>
-          ))}
+          <Card voice={VOICES[active]} role="current" run={run} />
+          {peek !== null && <Card voice={VOICES[peek]} role="peek" />}
         </div>
 
-        <div className="voice-dots" role="tablist" aria-label="Member quotes">
+        <div className="voice-people" role="tablist" aria-label="Member quotes">
           {VOICES.map((v, i) => (
             <button
               key={v.name}
@@ -121,8 +269,14 @@ export default function Voices() {
               aria-selected={i === active}
               aria-label={`${v.name}, ${v.city}`}
               className={i === active ? "is-on" : ""}
-              onClick={() => { hold(); go(i); release(); }}
-            />
+              onClick={() => {
+                if (i === activeRef.current) return;
+                hold();
+                finish(i > activeRef.current ? 1 : -1, i);
+              }}
+            >
+              {v.name.split(" ")[0]}
+            </button>
           ))}
         </div>
 
