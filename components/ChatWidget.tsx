@@ -191,6 +191,8 @@ export default function ChatWidget() {
           would have a screen reader announcing simulated chatter for as long
           as the section is on screen. The figcaption below says what this is;
           the real conversation is behind the Telegram link. */}
+      <div className="chat-stage">
+        <div className="chat-chart" aria-hidden="true" />
       <div className="chat-body" ref={bodyRef} onScroll={onScroll}>
         {msgs.map((m, i) => (
           <div key={i} className={`bubble is-${m.from}`}>
@@ -207,6 +209,7 @@ export default function ChatWidget() {
         {typing && (
           <div className="bubble typing" aria-hidden="true"><span /><span /><span /></div>
         )}
+      </div>
       </div>
 
       <form className={`chat-input ${openingDone && !sent ? "is-live" : ""}`} onSubmit={onSubmit}>

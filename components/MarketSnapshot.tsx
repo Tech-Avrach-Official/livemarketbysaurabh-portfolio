@@ -97,7 +97,7 @@ export default function MarketSnapshot() {
   return (
     <section className="snapshot" id="market">
       <div className="wrap">
-        <p className="eyebrow">02 — Markets</p>
+        <p className="eyebrow">03 — Markets</p>
         <h2>What the room is watching today</h2>
 
         <MarketStamp />

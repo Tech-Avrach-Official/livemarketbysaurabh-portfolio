@@ -25,7 +25,7 @@ export default function Community() {
   return (
     <section className="community" id="community">
       <div className="wrap">
-        <p className="eyebrow">01 — Inside</p>
+        <p className="eyebrow">02 — Inside</p>
         <h2>What actually happens inside</h2>
         <p className="section-sub">
           Not a broadcast channel. A room where people talk back — and the

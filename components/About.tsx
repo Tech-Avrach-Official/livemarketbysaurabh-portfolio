@@ -1,5 +1,6 @@
 import Image from "next/image";
 import MarketMarks from "./MarketMarks";
+import StatCards from "./StatCards";
 import { MEMBERS, HOST } from "@/lib/site";
 import saurabh from "@/public/about.jpg";
 
@@ -19,19 +20,13 @@ import saurabh from "@/public/about.jpg";
    work.
    ───────────────────────────────────────────────────────────────────── */
 
-const STATS = [
-  { value: "11+", label: "years trading" },
-  { value: MEMBERS, label: "traders in the community" },
-  { value: "Gold · Silver · Crude", label: "what he trades", small: true },
-];
-
 export default function About() {
   return (
     <section className="about" id="about">
       <MarketMarks />
 
       <div className="wrap">
-        <p className="eyebrow">04 — The host</p>
+        <p className="eyebrow">01 — The host</p>
 
         <div className="about-grid reveal">
           <figure className="about-photo">
@@ -74,16 +69,7 @@ export default function About() {
               </p>
             </div>
 
-            <dl className="stats">
-              {STATS.map((s) => (
-                <div key={s.label}>
-                  <dt className={`stat-value ${s.small ? "is-small" : "num"}`}>
-                    {s.value}
-                  </dt>
-                  <dd>{s.label}</dd>
-                </div>
-              ))}
-            </dl>
+            <StatCards members={MEMBERS} />
 
             <p className="about-handles">
               <a href="/#channels">Where to find him →</a>

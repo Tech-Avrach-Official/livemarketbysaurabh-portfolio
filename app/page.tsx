@@ -21,10 +21,10 @@ export default function Page() {
       <main id="top">
         <Hero />
         <MarketStrip />
+        <About />
         <Community />
         <MarketSnapshot />
         <Voices />
-        <About />
         <Fit />
         <Feed />
         <Channels />
